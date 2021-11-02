@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler, IPointerEnterHandler
+public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler /*IPointerEnterHandler*/
 {
     Vector2 firstClickPosition;
     Vector2 moveClickPosition;
@@ -15,6 +15,14 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
     public GameObject player;
 
     bool pressed = false;
+    private void Update()
+    {
+        if (pressed == true)
+        {
+            //player.GetComponent<Rigidbody>().AddForce(player.transform.forward);
+            player.transform.position += -player.transform.forward * speed * Time.deltaTime;
+        }
+    }
     public void OnPointerDown(PointerEventData eventData)
     {
         firstClickPosition = eventData.pointerCurrentRaycast.screenPosition;
@@ -36,14 +44,14 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
             player.transform.rotation = newRot;
         }
     }
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        if (pressed == true)
-        {
-            //player.GetComponent<Rigidbody>().AddForce(player.transform.forward);
-            player.transform.position += player.transform.forward * speed * Time.deltaTime;
-        }
-    }
+    //public void OnPointerEnter(PointerEventData eventData)
+    //{
+    //    if (pressed == true)
+    //    {
+    //        //player.GetComponent<Rigidbody>().AddForce(player.transform.forward);
+    //        player.transform.position += player.transform.forward * speed * Time.deltaTime;
+    //    }
+    //}
     public void OnPointerUp(PointerEventData eventData)
     {
         pressed = false;

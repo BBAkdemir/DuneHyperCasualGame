@@ -48,7 +48,7 @@ public class EarthWormMovement : MonoBehaviour
             dis = Vector3.Distance(prevBodyPart.position, curBodyPart.position);
 
             Vector3 newPos = prevBodyPart.position;
-            newPos.y = bodyParts[0].position.y;
+            //newPos.y = bodyParts[i + 1].position.y;
 
             float T = Time.deltaTime * dis / minDistance * curSpeed;
 

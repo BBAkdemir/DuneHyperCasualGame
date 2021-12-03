@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 
 public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHandler, IPointerUpHandler /*IPointerEnterHandler*/
 {
+    public static ClickControl Instance;
+
     Vector2 firstClickPosition;
     Vector2 moveClickPosition;
     Vector2 currentSwipe;
@@ -14,7 +16,15 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
 
     public GameObject player;
 
-    bool pressed = false;
+    public bool pressed = false;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
     private void Update()
     {
         if (pressed == true)

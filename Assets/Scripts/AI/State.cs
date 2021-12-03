@@ -45,6 +45,22 @@ public class State : MonoBehaviour
         }
         return this;
     }
+    public bool CanSeePlayer()
+    {
+        if (ClickControl.Instance.pressed == true)
+        {
+            return true;
+        }
+        return false;
+    }
+    //public bool CanAttackPlayer()
+    //{
+    //    if ()
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 }
 
 public class Patrol : State
@@ -71,6 +87,52 @@ public class Patrol : State
         {
             currentWayPoint = (currentWayPoint + 1) % PatrolPointsCheck.Instance.PatrolPoints.Count;
         }
+        if (CanSeePlayer())
+        {
+            nextState = new Pursue(player);
+            stage = EVENT.EXIT;
+        }
+    }
+    public override void Exit()
+    {
+        base.Exit();
+    }
+}
+
+public class Pursue : State
+{
+    private int currentWayPoint = 0;
+    public Pursue(Transform _player)
+                : base(_player)
+    {
+        s_name = STATE.PURSUE;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+    }
+    public override void Update()
+    {
+        if (ClickControl.Instance.pressed == true)
+        {
+            PatrolPointsCheck.Instance.gameObject.transform.position = Vector3.MoveTowards(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position, 2 * Time.deltaTime);
+            PatrolPointsCheck.Instance.gameObject.transform.LookAt(AI.Instance.player.position);
+        }
+        else
+        {
+            nextState = new Patrol(player);
+            stage = EVENT.EXIT;
+        }
+        //if (PatrolPointsCheck.Instance.gameObject.transform.position != PatrolPointsCheck.Instance.PatrolPoints[currentWayPoint].transform.position)
+        //{
+        //    PatrolPointsCheck.Instance.gameObject.transform.position = Vector3.MoveTowards(PatrolPointsCheck.Instance.gameObject.transform.position, PatrolPointsCheck.Instance.PatrolPoints[currentWayPoint].transform.position, 2 * Time.deltaTime);
+        //    PatrolPointsCheck.Instance.gameObject.transform.LookAt(PatrolPointsCheck.Instance.PatrolPoints[currentWayPoint].transform.position);
+        //}
+        //if (Vector3.Distance(PatrolPointsCheck.Instance.gameObject.transform.position, PatrolPointsCheck.Instance.PatrolPoints[currentWayPoint].transform.position) < 0.1f)
+        //{
+        //    currentWayPoint = (currentWayPoint + 1) % PatrolPointsCheck.Instance.PatrolPoints.Count;
+        //}
     }
     public override void Exit()
     {

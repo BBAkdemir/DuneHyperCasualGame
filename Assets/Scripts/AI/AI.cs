@@ -5,9 +5,18 @@ using UnityEngine.AI;
 
 public class AI : MonoBehaviour
 {
+    public static AI Instance;
+
     public Transform player;
     State currentState;
     bool isGameActive = true;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     void Start()
     {

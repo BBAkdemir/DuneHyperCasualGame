@@ -25,6 +25,10 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
             Instance = this;
         }
     }
+    private void Start()
+    {
+        speed = Character.Instance.Speed;
+    }
     private void Update()
     {
         if (pressed == true)

@@ -15,6 +15,5 @@ public class PatrolPointsCheck : MonoBehaviour
         {
             Instance = this;
         }
-        
     }
 }

@@ -157,6 +157,19 @@ public class Attack : State
     public override void Enter()
     {
         PatrolPointsCheck.Instance.gameObject.transform.DOMoveY(-1,2f);
+
+        if (Character.Instance.Heart > 1)
+        {
+            Character.Instance.Heart -= 1;
+        }
+        else
+        {
+            Character.Instance.Heart = 0;
+            GameManager.Instance.GameLost = true;
+            Time.timeScale = 0;
+            //burayada game managerde yapacaðýmýz metot çalýþtýrýlacak
+        }
+        
         //Buraya bizim karakterin damage yeem animasyonunu koyacaksýn
         nextState = new Idle(player);
         stage = EVENT.EXIT;

@@ -2,13 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
-    public static Character Instance;
-
-    public float Speed;
-    public int Heart;
-    public bool SafeZoneActive = false;
+    public static LevelManager Instance;
+    public float levelTime;
     private void Awake()
     {
         if (Instance == null)

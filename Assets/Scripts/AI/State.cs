@@ -48,7 +48,7 @@ public class State : MonoBehaviour
     }
     public bool CanSeePlayer()
     {
-        if (ClickControl.Instance.pressed == true)
+        if (ClickControl.Instance.pressed == true && Character.Instance.SafeZoneActive == false)
         {
             return true;
         }
@@ -56,7 +56,7 @@ public class State : MonoBehaviour
     }
     public bool CanNotSeePlayer()
     {
-        if (ClickControl.Instance.pressed == false)
+        if (ClickControl.Instance.pressed == false || Character.Instance.SafeZoneActive == true)
         {
             return true;
         }
@@ -64,7 +64,7 @@ public class State : MonoBehaviour
     }
     public bool CanAttackPlayer()
     {
-        if (Vector3.Distance(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position) < 3)
+        if (Vector3.Distance(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position) < 3 && Character.Instance.SafeZoneActive == false)
         {
             return true;
         }
@@ -96,7 +96,7 @@ public class Patrol : State
         {
             currentWayPoint = (currentWayPoint + 1) % PatrolPointsCheck.Instance.PatrolPoints.Count;
         }
-        if (CanSeePlayer())
+        if (CanSeePlayer() && Character.Instance.SafeZoneActive == false)
         {
             nextState = new Pursue(player);
             stage = EVENT.EXIT;
@@ -123,7 +123,7 @@ public class Pursue : State
     }
     public override void Update()
     {
-        if (ClickControl.Instance.pressed == true)
+        if (ClickControl.Instance.pressed == true && Character.Instance.SafeZoneActive == false)
         {
             PatrolPointsCheck.Instance.gameObject.transform.position = Vector3.MoveTowards(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position, 2 * Time.deltaTime);
             PatrolPointsCheck.Instance.gameObject.transform.LookAt(AI.Instance.player.position);
@@ -195,7 +195,6 @@ public class Idle : State
 
     public override void Enter()
     {
-        
         DOVirtual.DelayedCall(2f, () => {
             nextState = new Patrol(player);
             stage = EVENT.EXIT;

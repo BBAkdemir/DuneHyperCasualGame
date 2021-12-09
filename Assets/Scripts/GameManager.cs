@@ -6,7 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public bool GameLost = false;
+    public bool gameLost = false;
+    public bool gameWin = false;
     private void Awake()
     {
         if (Instance == null)
@@ -14,14 +15,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
-    void Start()
+    public void GameWin()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Time.timeScale = 0;
+        ////içini doldur
     }
 }

@@ -165,7 +165,7 @@ public class Attack : State
         else
         {
             Character.Instance.Heart = 0;
-            GameManager.Instance.GameLost = true;
+            GameManager.Instance.gameLost = true;
             Time.timeScale = 0;
             //burayada game managerde yapacaðýmýz metot çalýþtýrýlacak
         }

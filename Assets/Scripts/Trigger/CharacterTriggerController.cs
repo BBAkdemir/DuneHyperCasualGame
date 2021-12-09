@@ -35,4 +35,10 @@ public class CharacterTriggerController : MonoBehaviour
     {
         Character.Instance.SafeZoneActive = false;
     }
+    public void EnterGameFinish(GameObject gameObject)
+    {
+        GameManager.Instance.gameWin = true;
+        GameManager.Instance.GameWin();
+
+    }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.AI;
 
 public class AIRandomMovement : MonoBehaviour
 {
@@ -15,9 +16,14 @@ public class AIRandomMovement : MonoBehaviour
     float distance;
     Vector3 pos;
     float randomLeftRight;
+    bool wayPointAdded = false;
+
+    NavMeshPath navPath;
+    private NavMeshAgent ArtificialIntelligence;
 
     private void Awake()
     {
+        ArtificialIntelligence = gameObject.GetComponent<NavMeshAgent>();
         wayPoints = new List<Vector3>();
         wayPointsSpare = new List<Vector3>();
         wayPointsMachine(wayPointsCount);
@@ -31,19 +37,38 @@ public class AIRandomMovement : MonoBehaviour
         distance = Vector3.Distance(StartPos, finishPoint.transform.position) / wayPointsCount;
         randomLeftRight = Random.Range(-Mathf.Abs(StartPos.z - finishPoint.transform.position.z), Mathf.Abs(StartPos.z - finishPoint.transform.position.z));
         pos = new Vector3(StartPos.x + distance, StartPos.y, StartPos.z + randomLeftRight);
-        wayPoints.Add(pos);
+
+        #region Gidilemeyecek Yerlere Basmamamýzý Saðlayan Kod
+        navPath = new NavMeshPath();
+        ArtificialIntelligence.CalculatePath(pos, navPath);
+        if (navPath.status == NavMeshPathStatus.PathComplete)
+        {
+            wayPoints.Add(pos);
+            wayPointAdded = true;
+        }
+        #endregion
     }
     public void wayPointsMachine(int wayPointsCount)
     {
         for (int i = 0; i <= wayPointsCount - 1; i++)
         {
             if (i == 0)
+            {
                 wayPointsMaker(gameObject.transform.position, wayPointsCount);
+                if (wayPointAdded == false)
+                    i -= 1;
+            }
             if (i > 0 && i < wayPointsCount - 1)
+            {
                 wayPointsMaker(wayPoints[wayPoints.Count - 1], wayPointsCount - i);
+                if (wayPointAdded == false)
+                    i -= 1;
+            }
             if (i == wayPointsCount - 1)
             {
                 wayPoints.Add(finishPoint.transform.position);
+                if (wayPointAdded == false)
+                    i -= 1;
                 break;
             }
         }
@@ -52,8 +77,8 @@ public class AIRandomMovement : MonoBehaviour
     {
         while (wayPoints.Count > 0)
         {
-            if (transform.position != wayPoints[0])
-                transform.position = Vector3.MoveTowards(transform.position, wayPoints[0], moveSpeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position , new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z)) >= 0.2f)
+                ArtificialIntelligence.destination = new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z);
             else
             {
                 if (wayPoints.Count > 1)

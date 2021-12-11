@@ -26,14 +26,14 @@ public class CharacterTriggerController : MonoBehaviour
     {
         if (gameObject.GetComponent<TrueFalseControl>().Control == false)
         {
-            LevelManager.Instance.levelTime += TimeAdd;
+            GameManager.Instance.levelManager.GetComponent<LevelManager>().levelTime += TimeAdd;
             gameObject.GetComponent<TrueFalseControl>().Control = true;
         }
-        Character.Instance.SafeZoneActive = true;
+        ClickControl.Instance.player.GetComponent<Character>().SafeZoneActive = true;
     }
     public void ExitSafeZone()
     {
-        Character.Instance.SafeZoneActive = false;
+        ClickControl.Instance.player.GetComponent<Character>().SafeZoneActive = false;
     }
     public void EnterGameFinish(GameObject gameObject)
     {

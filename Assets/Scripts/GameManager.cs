@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 
     public bool gameLost = false;
     public bool gameWin = false;
+    public GameObject levelManager;
     private void Awake()
     {
         if (Instance == null)

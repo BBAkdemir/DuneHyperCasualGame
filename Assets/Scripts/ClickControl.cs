@@ -27,7 +27,7 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
     }
     private void Start()
     {
-        speed = Character.Instance.Speed;
+        speed = player.GetComponent<Character>().Speed;
     }
     private void Update()
     {

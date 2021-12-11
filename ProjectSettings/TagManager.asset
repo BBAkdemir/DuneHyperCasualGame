@@ -6,6 +6,8 @@ TagManager:
   tags:
   - EarthWorm
   - PatrolPoints
+  - LevelManager
+  - GameManager
   layers:
   - Default
   - TransparentFX

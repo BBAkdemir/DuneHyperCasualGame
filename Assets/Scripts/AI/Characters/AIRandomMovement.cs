@@ -77,7 +77,7 @@ public class AIRandomMovement : MonoBehaviour
     {
         while (wayPoints.Count > 0)
         {
-            if (Vector3.Distance(transform.position , new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z)) >= 0.2f)
+            if (Vector3.Distance(transform.position, new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z)) >= 0.2f)
                 ArtificialIntelligence.destination = new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z);
             else
             {

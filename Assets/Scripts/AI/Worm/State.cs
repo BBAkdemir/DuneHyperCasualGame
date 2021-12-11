@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using DG.Tweening;
+using System.Linq;
 
 public class State : MonoBehaviour
 {
@@ -15,16 +15,14 @@ public class State : MonoBehaviour
     {
         ENTER, UPDATE, EXIT
     };
-
     public STATE s_name;
     protected EVENT stage;
     protected Transform player;
     protected State nextState;
-
     float visDist = 20.0f;
     float visAngle = 30.0f;
     float shootDist = 15.0f;
-
+    public List<GameObject> RunStateCharacters;
     public State(Transform _player)
     {
         stage = EVENT.ENTER;
@@ -34,7 +32,6 @@ public class State : MonoBehaviour
     public virtual void Enter() { stage = EVENT.UPDATE; }
     public virtual void Update() { stage = EVENT.UPDATE; }
     public virtual void Exit() { stage = EVENT.EXIT; }
-
     public State Process()
     {
         if (stage == EVENT.ENTER) Enter();
@@ -46,9 +43,37 @@ public class State : MonoBehaviour
         }
         return this;
     }
+    private void Start()
+    {
+        StartCoroutine(ControlAI());
+    }
+    public IEnumerator ControlAI()
+    {
+        while (true)
+        {
+            foreach (var item in LevelManager.Instance.Characters)
+            {
+                if (item.GetComponent<Character>().hareket == true)
+                {
+                    RunStateCharacters.Add(item);
+                    LevelManager.Instance.kova = item;
+                    if (LevelManager.Instance.chosenAI != null && Vector3.Distance(LevelManager.Instance.kova.transform.position, LevelManager.Instance.worm.transform.position) < Vector3.Distance(LevelManager.Instance.chosenAI.transform.position, LevelManager.Instance.worm.transform.position))
+                    {
+                        LevelManager.Instance.chosenAI = LevelManager.Instance.kova;
+                    }
+                    if (LevelManager.Instance.chosenAI == null)
+                    {
+                        LevelManager.Instance.chosenAI = LevelManager.Instance.kova;
+                    }
+                }
+            }
+            yield return new WaitForSeconds(2f);
+            RunStateCharacters = new List<GameObject>();
+        }
+    }
     public bool CanSeePlayer()
     {
-        if (ClickControl.Instance.pressed == true && Character.Instance.SafeZoneActive == false)
+        if (LevelManager.Instance.chosenAI != null/*ClickControl.Instance.pressed == true && Character.Instance.SafeZoneActive == false*/)
         {
             return true;
         }
@@ -56,7 +81,7 @@ public class State : MonoBehaviour
     }
     public bool CanNotSeePlayer()
     {
-        if (ClickControl.Instance.pressed == false || Character.Instance.SafeZoneActive == true)
+        if (LevelManager.Instance.chosenAI == null/*ClickControl.Instance.pressed == false || Character.Instance.SafeZoneActive == true*/)
         {
             return true;
         }
@@ -64,7 +89,7 @@ public class State : MonoBehaviour
     }
     public bool CanAttackPlayer()
     {
-        if (Vector3.Distance(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position) < 3 && Character.Instance.SafeZoneActive == false)
+        if (LevelManager.Instance.chosenAI != null && Vector3.Distance(LevelManager.Instance.worm.transform.position, LevelManager.Instance.chosenAI.transform.position) < 3 && LevelManager.Instance.chosenAI.transform.GetComponent<Character>().SafeZoneActive == false )
         {
             return true;
         }
@@ -96,7 +121,7 @@ public class Patrol : State
         {
             currentWayPoint = (currentWayPoint + 1) % PatrolPointsCheck.Instance.PatrolPoints.Count;
         }
-        if (CanSeePlayer() && Character.Instance.SafeZoneActive == false)
+        if (CanSeePlayer() && LevelManager.Instance.chosenAI.transform.GetComponent<Character>().SafeZoneActive == false)
         {
             nextState = new Pursue(player);
             stage = EVENT.EXIT;
@@ -123,10 +148,10 @@ public class Pursue : State
     }
     public override void Update()
     {
-        if (ClickControl.Instance.pressed == true && Character.Instance.SafeZoneActive == false)
+        if (/*ClickControl.Instance.pressed == true && */LevelManager.Instance.chosenAI.transform.GetComponent<Character>().SafeZoneActive == false)
         {
-            PatrolPointsCheck.Instance.gameObject.transform.position = Vector3.MoveTowards(PatrolPointsCheck.Instance.gameObject.transform.position, AI.Instance.player.position, 2 * Time.deltaTime);
-            PatrolPointsCheck.Instance.gameObject.transform.LookAt(AI.Instance.player.position);
+            LevelManager.Instance.worm.transform.position = Vector3.MoveTowards(LevelManager.Instance.worm.transform.position, LevelManager.Instance.chosenAI.transform.position, 2 * Time.deltaTime);
+            LevelManager.Instance.worm.transform.LookAt(LevelManager.Instance.chosenAI.transform.position);
         }
         else if (CanNotSeePlayer())
         {
@@ -156,20 +181,25 @@ public class Attack : State
 
     public override void Enter()
     {
-        PatrolPointsCheck.Instance.gameObject.transform.DOMoveY(-1,2f);
+        LevelManager.Instance.worm.transform.DOMoveY(-1, 2f);
 
-        if (Character.Instance.Heart > 1)
+        if (LevelManager.Instance.chosenAI.transform.GetComponent<Character>().Heart > 1)
         {
-            Character.Instance.Heart -= 1;
+            LevelManager.Instance.chosenAI.transform.GetComponent<Character>().Heart -= 1;
+            LevelManager.Instance.chosenAI = null;
         }
         else
         {
-            Character.Instance.Heart = 0;
-            GameManager.Instance.gameLost = true;
-            Time.timeScale = 0;
+            LevelManager.Instance.chosenAI.transform.GetComponent<Character>().Heart = 0;
+            LevelManager.Instance.Characters.Remove(LevelManager.Instance.chosenAI);
+            Destroy(LevelManager.Instance.chosenAI);
+            LevelManager.Instance.chosenAI = null;
+
+            //GameManager.Instance.gameLost = true;
+            //Time.timeScale = 0;
             //burayada game managerde yapacaðýmýz metot çalýþtýrýlacak
         }
-        
+
         //Buraya bizim karakterin damage yeem animasyonunu koyacaksýn
         nextState = new Idle(player);
         stage = EVENT.EXIT;
@@ -195,7 +225,8 @@ public class Idle : State
 
     public override void Enter()
     {
-        DOVirtual.DelayedCall(2f, () => {
+        DOVirtual.DelayedCall(2f, () =>
+        {
             nextState = new Patrol(player);
             stage = EVENT.EXIT;
         });
@@ -209,3 +240,4 @@ public class Idle : State
         base.Exit();
     }
 }
+

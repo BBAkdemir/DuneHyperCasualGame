@@ -5,8 +5,8 @@ using UnityEngine;
 public class CollectSpeed : MonoBehaviour, ICollectable
 {
     [SerializeField] int SpeedAdd;
-    public void Collect()
+    public void Collect(GameObject gameObject)
     {
-        FindObjectOfType<CharacterTriggerController>().CollectSpeed(SpeedAdd, gameObject);
+        gameObject.GetComponent<CharacterTriggerController>().CollectSpeed(SpeedAdd, this.gameObject);
     }
 }

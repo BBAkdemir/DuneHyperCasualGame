@@ -9,8 +9,12 @@ public class LevelManager : MonoBehaviour
     public float levelTime;
     public GameObject worm;
     public GameObject chosenAI;
-    public GameObject kova;
+    public GameObject reserveAI;
+    public GameObject chosenBooster;
+    public GameObject reserveBooster;
+    public GameObject PlayerObject;
     public List<GameObject> Characters;
+    public List<GameObject> Boosters;
     private void Awake()
     {
         if (Instance == null)

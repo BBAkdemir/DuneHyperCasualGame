@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AI : MonoBehaviour
+public class AIWorm : MonoBehaviour
 {
-    public static AI Instance;
+    public static AIWorm Instance;
 
     public Transform player;
-    State currentState;
+    StateWorm currentState;
     bool isGameActive = true;
     private void Awake()
     {
@@ -20,7 +20,7 @@ public class AI : MonoBehaviour
 
     void Start()
     {
-        currentState = new Patrol(player);
+        currentState = new PatrolWorm(player);
     }
 
     void Update()

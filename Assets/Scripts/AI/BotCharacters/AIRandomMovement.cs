@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class AIRandomMovement : MonoBehaviour
 {
     public float moveSpeed;
-    public float rotateSpeed;
     public int wayPointsCount;
 
     public GameObject finishPoint;
@@ -27,6 +26,7 @@ public class AIRandomMovement : MonoBehaviour
         wayPoints = new List<Vector3>();
         wayPointsSpare = new List<Vector3>();
         wayPointsMachine(wayPointsCount);
+        moveSpeed = gameObject.GetComponent<Character>().Speed;
     }
     void Start()
     {
@@ -78,7 +78,18 @@ public class AIRandomMovement : MonoBehaviour
         while (wayPoints.Count > 0)
         {
             if (Vector3.Distance(transform.position, new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z)) >= 0.2f)
-                ArtificialIntelligence.destination = new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z);
+            {
+                if (gameObject.GetComponent<Character>().hareket == true)
+                {
+                    ArtificialIntelligence.isStopped = false;
+                    ArtificialIntelligence.speed = moveSpeed;
+                    ArtificialIntelligence.destination = new Vector3(wayPoints[0].x, gameObject.transform.position.y, wayPoints[0].z);
+                }
+                else
+                {
+                    ArtificialIntelligence.isStopped = true;
+                }
+            }
             else
             {
                 if (wayPoints.Count > 1)

@@ -1,15 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CharacterTriggerController : MonoBehaviour
 {
+    public GameObject characterObj;
+    //NavMeshAgent characterNavMesh;
+    Character characterScript;
+    AIRandomMovement randomMovementScript;
+    private void Start()
+    {
+        characterScript = characterObj.GetComponent<Character>();
+        //characterNavMesh = characterObj.GetComponent<NavMeshAgent>();
+        randomMovementScript = characterObj.GetComponent<AIRandomMovement>();
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<ICollectable>() == null) return;
         else
         {
-            other.GetComponent<ICollectable>().Collect();
+            other.GetComponent<ICollectable>().Collect(characterObj);
         }
     }
     private void OnTriggerExit(Collider other)
@@ -18,7 +29,15 @@ public class CharacterTriggerController : MonoBehaviour
     }
     public void CollectSpeed(float SpeedAdd, GameObject gameObject)
     {
-        ClickControl.Instance.speed += SpeedAdd;
+        characterScript.Speed += SpeedAdd;
+        if (characterScript.objectType == Character.ObjectType.Player)
+        {
+            ClickControl.Instance.speed += SpeedAdd;
+        }
+        if (characterScript.objectType == Character.ObjectType.AI)
+        {
+            randomMovementScript.moveSpeed += SpeedAdd;
+        }
         Destroy(gameObject);
     }
 
@@ -29,16 +48,18 @@ public class CharacterTriggerController : MonoBehaviour
             GameManager.Instance.levelManager.GetComponent<LevelManager>().levelTime += TimeAdd;
             gameObject.GetComponent<TrueFalseControl>().Control = true;
         }
-        ClickControl.Instance.player.GetComponent<Character>().SafeZoneActive = true;
+        characterScript.SafeZoneActive = true;
     }
     public void ExitSafeZone()
     {
-        ClickControl.Instance.player.GetComponent<Character>().SafeZoneActive = false;
+        characterScript.SafeZoneActive = false;
     }
-    public void EnterGameFinish(GameObject gameObject)
+    public void EnterGameFinish()
     {
-        GameManager.Instance.gameWin = true;
-        GameManager.Instance.GameWin();
-
+        if (characterObj == LevelManager.Instance.PlayerObject)
+        {
+            GameManager.Instance.gameWin = true;
+            GameManager.Instance.GameWin();
+        }
     }
 }

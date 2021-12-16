@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class EnterGameFinish : MonoBehaviour, ICollectable
 {
-    public void Collect()
+    public void Collect(GameObject gameObject)
     {
-        FindObjectOfType<CharacterTriggerController>().EnterGameFinish(gameObject);
+        gameObject.GetComponent<CharacterTriggerController>().EnterGameFinish();
     }
 }

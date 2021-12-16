@@ -17,6 +17,7 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
     public GameObject player;
 
     public bool pressed = false;
+    public bool ControlActivate = true;
 
     private void Awake()
     {
@@ -39,12 +40,15 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        firstClickPosition = eventData.pointerCurrentRaycast.screenPosition;
-        pressed = true;
+        if (ControlActivate == true)
+        {
+            firstClickPosition = eventData.pointerCurrentRaycast.screenPosition;
+            pressed = true;
+        }
     }
     public void OnPointerMove(PointerEventData eventData)
     {
-        if (pressed == true)
+        if (pressed == true && ControlActivate == true)
         {
             moveClickPosition = eventData.pointerCurrentRaycast.screenPosition;
 
@@ -69,5 +73,6 @@ public class ClickControl : MonoBehaviour, IPointerDownHandler, IPointerMoveHand
     public void OnPointerUp(PointerEventData eventData)
     {
         pressed = false;
+
     }
 }

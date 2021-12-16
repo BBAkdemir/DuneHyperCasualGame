@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AICharacters : MonoBehaviour
+public class AICharacter : MonoBehaviour
 {
     public Transform player;
-    public StateCharacters currentState;
+    public StateCharacter currentState;
     bool isGameActive = true;
 
     void Start()
     {
-        currentState = new RunAICharacters(player);
+        currentState = new IdleCharacter(player);
     }
 
     void Update()
